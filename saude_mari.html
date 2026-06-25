@@ -232,6 +232,13 @@ textarea.form-input { resize: vertical; min-height: 70px; line-height: 1.5; }
         <button class="cb s-orange" id="inchaco-sim-btn" onclick="setInchacou(true,this)">🌀 Sim, inchou</button>
         <button class="cb" id="inchaco-nao-btn" onclick="setInchacou(false,this)">✅ Não inchou</button>
       </div>
+      <span class="form-label">Quando comeu?</span>
+      <div class="cg cg-4">
+        <button class="cb" onclick="setC('inc_periodo','manha','s-yellow',this)">🌅 Manhã</button>
+        <button class="cb" onclick="setC('inc_periodo','tarde','s-orange',this)">☀️ Tarde</button>
+        <button class="cb" onclick="setC('inc_periodo','noite','s-blue',this)">🌙 Noite</button>
+        <button class="cb" onclick="setC('inc_periodo','madrugada','s-purple',this)">🌃 Madrugada</button>
+      </div>
       <span class="form-label">O que comeu?</span>
       <input class="form-input" id="inc-comeu" type="text" placeholder="Ex: arroz + feijão, fruta, lanche...">
       <div id="inchaco-detalhes">
@@ -600,7 +607,7 @@ let bristolVal = null;
 let currentFilter = 'todos';
 
 function resetChoices() {
-  choices = { sleepq:'boa', horas:'mais8', wakeups:'nao', sleep_delay:'nao', stress:'baixo', foi:'sim', esforco:'nao', gases_int:'nao', exdur:'30min', exfeel:'bem', cphase:'menstruacao', cflow:'ausente', cpain:'sem', clombar:'sem', ccabeca:'sem', cpernas:'sem', canti:'0', cfatigue:'normal', ccandida:'nao', ccoceira:'pouca', cherpes:'nao', inc_quando:'logo', inc_int:'medio', inchacou:true, inc_lactose:'nao', inc_lactase:'sim', med_periodo:'hoje', bex_dia:'1a4', bex_noite:'0', bex_urgencia:'nao', bex_dor:'nao' };
+  choices = { inc_periodo:'', sleepq:'boa', horas:'mais8', wakeups:'nao', sleep_delay:'nao', stress:'baixo', foi:'sim', esforco:'nao', gases_int:'nao', exdur:'30min', exfeel:'bem', cphase:'menstruacao', cflow:'ausente', cpain:'sem', clombar:'sem', ccabeca:'sem', cpernas:'sem', canti:'0', cfatigue:'normal', ccandida:'nao', ccoceira:'pouca', cherpes:'nao', inc_quando:'logo', inc_int:'medio', inchacou:true, inc_lactose:'nao', inc_lactase:'sim',  inc_periodo:'', med_periodo:'hoje', bex_dia:'1a4', bex_noite:'0', bex_urgencia:'nao', bex_dor:'nao' };
   selectedEx = new Set();
   selectedMed = new Set();
   selectedIncSint = new Set();
@@ -743,7 +750,7 @@ async function saveEntry() {
     if(!comeu){showToast('O que você comeu? 😊');return;}
     e.comeu=comeu; e.inchacou=choices.inchacou;
     if(choices.inchacou){ e.quando=choices.inc_quando; e.intensidade=choices.inc_int; e.sintomas=[...selectedIncSint]; }
-    e.lactose=choices.inc_lactose; e.lactase=choices.inc_lactase;
+    e.periodo_refeicao=choices.inc_periodo; e.lactose=choices.inc_lactose; e.lactase=choices.inc_lactase;
     e.obs=document.getElementById('inc-obs').value.trim();
   } else if(currentType==='intestino') {
     e.foi=choices.foi; e.bristol=bristolVal; e.esforco=choices.esforco; e.gases=choices.gases_int;
@@ -820,7 +827,9 @@ function entryCard(e, withDel=true) {
     if(e.mes) sub+=' — '+e.mes;
     if(e.obs) sub+=' · '+e.obs;
   } else if(e.type==='inchaco'){
-    title = e.inchacou ? '🌀 Inchou após: '+e.comeu : '✅ Sem inchaço: '+e.comeu;
+    const periodoIcon={manha:'🌅',tarde:'☀️',noite:'🌙',madrugada:'🌃'};
+    const periLabel = e.periodo_refeicao ? periodoIcon[e.periodo_refeicao]+' ' : '';
+    title = e.inchacou ? '🌀 Inchou após: '+periLabel+e.comeu : '✅ Sem inchaço: '+periLabel+e.comeu;
     const whenMap={logo:'logo após','1h':'~1h depois','2h':'~2h depois',horas:'horas depois'};
     if(e.inchacou) sub=(whenMap[e.quando]||e.quando)+' · '+(e.intensidade||'');
     if(e.sintomas&&e.sintomas.length) sub+=(sub?' · ':'')+e.sintomas.join(', ');
