@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Saúde · Mari</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+:root {
+  --bg: #F2EDE8; --card: #FFFFFF; --card2: #FAF8F6;
+  --text: #1C1C1E; --text2: #3A3A3C; --muted: #8E8E93; --sep: #E5E0DA;
+  --accent: #A0522D; --accent-mid: #C07B5A; --accent-light: #F0E4DB;
+  --green: #34C759; --green-bg: #E8F8EC;
+  --yellow: #FF9500; --yellow-bg: #FFF3E0;
+  --red-col: #C07B5A; --red-bg: #F0E4DB;
+  --blue: #007AFF; --blue-bg: #E5F0FF;
+  --purple: #AF52DE; --purple-bg: #F3E8FF;
+  --pink: #FF2D55; --pink-bg: #FFE5EB;
+  --teal: #32ADE6; --teal-bg: #E0F4FD;
+  --radius-lg: 16px; --radius-md: 12px; --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.04);
+}
+body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 15px; padding-bottom: 32px; }
+
+/* HEADER */
+header { background: rgba(242,237,232,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid var(--sep); padding: 14px 18px 0; position: sticky; top: 0; z-index: 100; }
+.header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.logo { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+.logo em { color: var(--accent-mid); font-style: normal; }
+.date-lbl { font-size: 12px; color: var(--muted); }
+.tabs { display: flex; overflow-x: auto; gap: 0; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { flex-shrink: 0; padding: 9px 10px 11px; border: none; background: transparent; cursor: pointer; font-size: 11px; color: var(--muted); font-family: inherit; font-weight: 500; border-bottom: 2px solid transparent; transition: color .18s, border-color .18s; white-space: nowrap; }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+
+/* LAYOUT */
+.content { padding: 14px; max-width: 520px; margin: 0 auto; }
+.section { display: none; }
+.section.active { display: block; }
+
+/* CARD */
+.card { background: var(--card); border-radius: var(--radius-lg); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 12px; }
+.card-pad { padding: 14px; }
+.card-title { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; padding: 12px 14px 6px; }
+
+/* STAT GRID */
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.stat-card { background: var(--card); border-radius: var(--radius-lg); box-shadow: var(--shadow); padding: 12px 14px; }
+.stat-label { font-size: 11px; color: var(--muted); font-weight: 500; margin-bottom: 3px; }
+.stat-value { font-size: 26px; font-weight: 700; letter-spacing: -1px; line-height: 1; }
+.stat-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* LIST */
+.list-item { display: flex; align-items: flex-start; gap: 10px; padding: 11px 14px; border-bottom: 1px solid var(--sep); }
+.list-item:last-child { border-bottom: none; }
+.item-icon { width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.icon-inchaco { background: var(--accent-light); } .icon-med { background: #EDE8FF; } .icon-bexiga { background: var(--blue-bg); } .icon-exame { background: var(--blue-bg); }
+.icon-sono { background: var(--purple-bg); } .icon-ciclo { background: var(--pink-bg); }
+.icon-exercicio { background: var(--teal-bg); } .icon-intestino { background: var(--green-bg); }
+.icon-exame { background: var(--blue-bg); } .icon-nota { background: var(--card2); border: 1px solid var(--sep); }
+.item-body { flex: 1; min-width: 0; }
+.item-title { font-size: 14px; color: var(--text); font-weight: 500; line-height: 1.3; }
+.item-sub { font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+.item-date { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.btn-del { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 19px; padding: 0 0 0 6px; line-height: 1; opacity: .35; flex-shrink: 0; margin-top: 2px; }
+.btn-del:hover { opacity: 1; color: #c0392b; }
+
+/* PILLS */
+.pill { display: inline-flex; align-items: center; padding: 2px 7px; border-radius: 20px; font-size: 11px; font-weight: 600; margin-right: 3px; margin-top: 2px; }
+.pill-leve,.pill-nao,.pill-boa,.pill-sem,.pill-normal-i { background: var(--green-bg); color: #1a8f3c; }
+.pill-medio,.pill-ok,.pill-pouco,.pill-leve-f { background: var(--yellow-bg); color: #a05c00; }
+.pill-forte,.pill-muito,.pill-ruim,.pill-intenso { background: var(--red-bg); color: var(--red-col); }
+.pill-muitomais,.pill-pessima { background: #FFE0D6; color: #c0392b; }
+.pill-médio { background: var(--yellow-bg); color: #a05c00; }
+
+/* SEGMENT CONTROL */
+.seg { display: flex; background: rgba(120,120,128,.12); border-radius: 11px; padding: 3px; margin-bottom: 16px; flex-wrap: wrap; gap: 3px; }
+.seg-btn { flex: 1; min-width: 64px; padding: 10px 6px; border: none; background: transparent; border-radius: 9px; cursor: pointer; font-size: 12px; color: var(--muted); font-family: inherit; font-weight: 500; transition: all .18s; white-space: nowrap; text-align: center; line-height: 1.3; }
+.seg-btn.active { background: var(--card); color: var(--text); font-weight: 600; box-shadow: 0 1px 4px rgba(0,0,0,.12); }
+
+/* FORM */
+.form-label { font-size: 13px; color: var(--muted); font-weight: 500; margin-bottom: 5px; margin-top: 13px; display: block; }
+.form-input { width: 100%; padding: 10px 12px; border: 1.5px solid var(--sep); border-radius: var(--radius-sm); font-size: 15px; font-family: inherit; color: var(--text); background: var(--card2); outline: none; transition: border-color .18s; }
+.form-input:focus { border-color: var(--accent-mid); background: var(--card); }
+textarea.form-input { resize: vertical; min-height: 70px; line-height: 1.5; }
+
+/* CHOICE GRID */
+.cg { display: grid; gap: 7px; margin-top: 5px; }
+.cg-2 { grid-template-columns: 1fr 1fr; }
+.cg-3 { grid-template-columns: 1fr 1fr 1fr; }
+.cg-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+.cg-5 { grid-template-columns: 1fr 1fr 1fr 1fr 1fr; }
+.cb { padding: 10px 6px; border-radius: var(--radius-sm); border: 1.5px solid var(--sep); background: var(--card2); cursor: pointer; font-size: 12px; color: var(--muted); text-align: center; transition: all .18s; font-family: inherit; font-weight: 500; line-height: 1.3; }
+.cb:active { transform: scale(.97); }
+/* selected states */
+.cb.s-green { border-color: var(--green); background: var(--green-bg); color: #1a8f3c; font-weight: 700; }
+.cb.s-yellow { border-color: #e08800; background: #FFF8ED; color: #b56f00; font-weight: 700; }
+.cb.s-orange { border-color: var(--accent-mid); background: var(--accent-light); color: var(--accent); font-weight: 700; }
+.cb.s-red { border-color: #c0392b; background: #FFE0D6; color: #c0392b; font-weight: 700; }
+.cb.s-purple { border-color: var(--purple); background: var(--purple-bg); color: var(--purple); font-weight: 700; }
+.cb.s-blue { border-color: var(--blue); background: var(--blue-bg); color: var(--blue); font-weight: 700; }
+.cb.s-pink { border-color: var(--pink); background: var(--pink-bg); color: var(--pink); font-weight: 700; }
+.cb.s-teal { border-color: var(--teal); background: var(--teal-bg); color: #0077aa; font-weight: 700; }
+
+/* BRISTOL */
+.bristol-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 5px; margin-top: 5px; }
+.bristol-btn { padding: 8px 2px; border-radius: 8px; border: 1.5px solid var(--sep); background: var(--card2); cursor: pointer; text-align: center; transition: all .18s; font-family: inherit; }
+.bristol-num { font-size: 14px; font-weight: 700; color: var(--text); }
+.bristol-icon { font-size: 18px; line-height: 1.2; }
+.bristol-desc { font-size: 9px; color: var(--muted); margin-top: 2px; line-height: 1.2; }
+.bristol-btn.sel { border-color: var(--accent-mid); background: var(--accent-light); }
+.bristol-btn.sel .bristol-num { color: var(--accent); }
+
+/* BTN PRIMARY */
+.btn-primary { width: 100%; padding: 13px; background: var(--accent); color: white; border: none; border-radius: var(--radius-md); font-size: 16px; font-weight: 600; cursor: pointer; font-family: inherit; margin-top: 16px; letter-spacing: -.2px; transition: opacity .18s; }
+.btn-primary:hover { opacity: .88; }
+.btn-primary:active { transform: scale(.99); }
+.btn-primary.blue { background: var(--blue); }
+
+/* FILTER BAR */
+.filter-bar { display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 2px; }
+.filter-bar::-webkit-scrollbar { display: none; }
+.fp { padding: 5px 13px; border-radius: 20px; border: 1.5px solid var(--sep); background: var(--card); cursor: pointer; font-size: 13px; color: var(--muted); font-family: inherit; font-weight: 500; white-space: nowrap; transition: all .18s; }
+.fp.active { background: var(--accent); border-color: var(--accent); color: white; font-weight: 600; }
+
+/* EMPTY */
+.empty { text-align: center; padding: 40px 20px; color: var(--muted); }
+.empty-icon { font-size: 36px; margin-bottom: 8px; }
+.empty-text { font-size: 14px; line-height: 1.5; }
+
+/* AI */
+.ai-response { background: var(--card2); border-radius: var(--radius-sm); padding: 13px; font-size: 14px; line-height: 1.65; color: var(--text2); margin-top: 12px; white-space: pre-wrap; display: none; }
+.ai-loading { display: none; text-align: center; padding: 20px; color: var(--muted); font-size: 14px; }
+
+/* DX cards */
+.dx-row { background: var(--card); border-radius: var(--radius-md); box-shadow: var(--shadow); padding: 11px 13px; display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+.dx-icon { font-size: 18px; flex-shrink: 0; padding-top: 1px; }
+.dx-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.dx-note { font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+
+/* BACKUP */
+.backup-row { display: flex; gap: 8px; align-items: center; padding: 10px 14px; border-top: 1px solid var(--sep); }
+.btn-sm { padding: 6px 12px; border-radius: 20px; border: 1.5px solid var(--sep); background: var(--card2); cursor: pointer; font-size: 12px; color: var(--muted); font-family: inherit; font-weight: 500; transition: all .18s; white-space: nowrap; }
+.btn-sm:hover { border-color: var(--accent-mid); color: var(--accent); }
+.backup-label { font-size: 11px; color: var(--muted); flex: 1; }
+
+/* TOAST */
+.toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(80px); background: rgba(28,28,30,.9); color: white; padding: 9px 18px; border-radius: 22px; font-size: 14px; z-index: 999; transition: transform .28s cubic-bezier(.4,0,.2,1); pointer-events: none; backdrop-filter: blur(8px); }
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+@media(max-width:400px){
+  .cg-5 { grid-template-columns: 1fr 1fr 1fr; }
+  .bristol-grid { grid-template-columns: repeat(4,1fr); }
+  .cg-4 { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-row">
+    <div class="logo">saúde <em>·</em> Mari</div>
+    <div class="date-lbl" id="currentDate"></div>
+  </div>
+  <div class="tabs">
+    <button class="tab" onclick="switchTab('resumo',this)">Resumo</button>
+    <button class="tab active" onclick="switchTab('registrar',this)">+ Registrar</button>
+    <button class="tab" onclick="switchTab('historico',this)">Histórico</button>
+    <button class="tab" onclick="switchTab('exames',this)">🔬 Exames</button>
+    <button class="tab" onclick="switchTab('analise',this)">Análise IA</button>
+  </div>
+</header>
+
+<div class="content">
+
+<!-- RESUMO -->
+<div class="section" id="sec-resumo">
+  <div style="margin-top:8px">
+    <div class="dx-row"><div class="dx-icon">🦠</div><div><div class="dx-name">SIBO-IMO</div><div class="dx-note">Rifaximina + neomicina → piorou. Tratamento pausado.</div></div></div>
+    <div class="dx-row"><div class="dx-icon">🌸</div><div><div class="dx-name">Endometriose + Adenomiose</div><div class="dx-note">Anticoncepcional (3ª–4ª cartela). Fluxo e dor melhorando.</div></div></div>
+    <div class="dx-row"><div class="dx-icon">🧬</div><div><div class="dx-name">Intolerância à lactose · Candidíase recorrente</div><div class="dx-note">Usa lactase. Candidíase sem tratamento ativo.</div></div></div>
+    <div class="dx-row"><div class="dx-icon">🦵</div><div><div class="dx-name">Síndrome das pernas inquietas</div><div class="dx-note">Em remissão. ⚠️ Refazer exame de ferritina.</div></div></div>
+    <div class="dx-row"><div class="dx-icon">💊</div><div><div class="dx-name">B12 baixa · Ansiedade (encerrado) · Insônia variável</div><div class="dx-note">B12 suplementada. Ansiedade sem medicação.</div></div></div>
+  </div>
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-label">Total</div><div class="stat-value" id="s-total">0</div><div class="stat-sub">registros</div></div>
+    <div class="stat-card"><div class="stat-label">Último</div><div class="stat-value" style="font-size:16px;padding-top:5px" id="s-last">—</div><div class="stat-sub" id="s-lasttype">—</div></div>
+    <div class="stat-card"><div class="stat-label">Inchações</div><div class="stat-value" id="s-sint" style="color:var(--accent-mid)">0</div><div class="stat-sub">episódios</div></div>
+    <div class="stat-card"><div class="stat-label">Noites</div><div class="stat-value" id="s-sono" style="color:var(--purple)">0</div><div class="stat-sub">avaliadas</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Últimos registros</div>
+    <div id="recentList"><div class="empty"><div class="empty-icon">🌿</div><div class="empty-text">Nenhum registro ainda.<br>Toca em "+ Registrar" pra começar.</div></div></div>
+  </div>
+  <div class="card">
+    <div class="backup-row">
+      <span class="backup-label">💾 Backup</span>
+      <button class="btn-sm" onclick="exportData()">⬇ Exportar</button>
+      <button class="btn-sm" onclick="document.getElementById('importFile').click()">⬆ Importar</button>
+      <input type="file" id="importFile" accept=".json" onchange="importData(event)" style="display:none">
+    </div>
+  </div>
+</div>
+
+<!-- REGISTRAR -->
+<div class="section active" id="sec-registrar">
+  <div style="margin-top:8px">
+    <div class="card card-pad" style="margin-bottom:12px;display:flex;align-items:center;gap:10px">
+      <span style="font-size:13px;color:var(--muted);font-weight:500;white-space:nowrap">📅 Data</span>
+      <input class="form-input" id="entry-date" type="date" style="margin:0;flex:1">
+    </div>
+    <div class="seg" id="typeCtrl">
+      <button class="seg-btn active" onclick="setType('inchaco',this)">🌀 Inchaço</button>
+      <button class="seg-btn" onclick="setType('intestino',this)">🚽 Intestino</button>
+      <button class="seg-btn" onclick="setType('bexiga',this)">💧 Bexiga</button>
+      <button class="seg-btn" onclick="setType('sono',this)">🌙 Sono</button>
+      <button class="seg-btn" onclick="setType('exercicio',this)">🏃 Exercício</button>
+      <button class="seg-btn" onclick="setType('ciclo',this)">🌸 Ciclo</button>
+      <button class="seg-btn" onclick="setType('med',this)">💊 Med/Supl</button>
+      <button class="seg-btn" onclick="setType('nota',this)">📝 Nota</button>
+    </div>
+
+    <!-- INCHAÇO -->
+    <div id="fields-inchaco" class="card card-pad" style="display:none">
+      <span class="form-label">Inchou?</span>
+      <div class="cg cg-2">
+        <button class="cb s-orange" id="inchaco-sim-btn" onclick="setInchacou(true,this)">🌀 Sim, inchou</button>
+        <button class="cb" id="inchaco-nao-btn" onclick="setInchacou(false,this)">✅ Não inchou</button>
+      </div>
+      <span class="form-label">O que comeu?</span>
+      <input class="form-input" id="inc-comeu" type="text" placeholder="Ex: arroz + feijão, fruta, lanche...">
+      <div id="inchaco-detalhes">
+        <span class="form-label">Sintomas junto? (opcional)</span>
+      <div class="cg cg-2">
+        <button class="cb" onclick="toggleIncSint(this,'gases')">💨 Gases</button>
+        <button class="cb" onclick="toggleIncSint(this,'queimação')">🔥 Queimação</button>
+      </div>
+      <span class="form-label">Quando inchou?</span>
+        <div class="cg cg-2">
+          <button class="cb s-orange" onclick="setC('inc_quando','logo','s-orange',this)">⚡ Logo após</button>
+          <button class="cb" onclick="setC('inc_quando','1h','s-yellow',this)">🕐 ~1h depois</button>
+          <button class="cb" onclick="setC('inc_quando','2h','s-yellow',this)">🕑 ~2h depois</button>
+          <button class="cb" onclick="setC('inc_quando','horas','s-blue',this)">🕓 Só horas depois</button>
+        </div>
+        <span class="form-label">Intensidade</span>
+        <div class="cg cg-4">
+          <button class="cb" onclick="setC('inc_int','leve','s-green',this)">🟢<br>Leve</button>
+          <button class="cb s-yellow" onclick="setC('inc_int','medio','s-yellow',this)">🟡<br>Médio</button>
+          <button class="cb" onclick="setC('inc_int','forte','s-orange',this)">🟠<br>Forte</button>
+          <button class="cb" onclick="setC('inc_int','muito','s-red',this)">🔴<br>Demais</button>
+        </div>
+      </div>
+      <span class="form-label">Tinha lactose?</span>
+      <div class="cg cg-2">
+        <button class="cb s-green" onclick="setC('inc_lactose','nao','s-green',this)">✅ Não tinha</button>
+        <button class="cb" onclick="setC('inc_lactose','sim','s-orange',this)">🥛 Sim, tinha</button>
+      </div>
+      <div id="inc-lactase-row" style="display:none">
+        <span class="form-label">Tomou lactase?</span>
+        <div class="cg cg-2">
+          <button class="cb s-green" onclick="setC('inc_lactase','sim','s-green',this)">✅ Sim</button>
+          <button class="cb" onclick="setC('inc_lactase','nao','s-red',this)">❌ Não</button>
+        </div>
+      </div>
+      <span class="form-label">Observação (opcional)</span>
+      <input class="form-input" id="inc-obs" type="text" placeholder="Ex: passou em 1h, barriga dura, muito gás...">
+    </div>
+
+
+
+    <!-- INTESTINO -->
+    <div id="fields-intestino" class="card card-pad" style="display:none">
+      <span class="form-label">Foi ao banheiro hoje?</span>
+      <div class="cg cg-3">
+        <button class="cb s-green" onclick="setC('foi','sim','s-green',this)">✅ Sim</button>
+        <button class="cb" onclick="setC('foi','nao','s-red',this)">❌ Não</button>
+        <button class="cb" onclick="setC('foi','varias','s-yellow',this)">🔄 Várias vezes</button>
+      </div>
+      <span class="form-label">Consistência (Escala de Bristol)</span>
+      <div class="bristol-grid" id="bristolGrid">
+        <button class="bristol-btn" onclick="setBristol(1,this)"><div class="bristol-num">1</div><div class="bristol-icon">🪨</div><div class="bristol-desc">Bolinhas duras</div></button>
+        <button class="bristol-btn" onclick="setBristol(2,this)"><div class="bristol-num">2</div><div class="bristol-icon">🌰</div><div class="bristol-desc">Grumos duros</div></button>
+        <button class="bristol-btn" onclick="setBristol(3,this)"><div class="bristol-num">3</div><div class="bristol-icon">🌭</div><div class="bristol-desc">Com rachaduras</div></button>
+        <button class="bristol-btn" onclick="setBristol(4,this)"><div class="bristol-num">4</div><div class="bristol-icon">🍌</div><div class="bristol-desc">Liso, normal</div></button>
+        <button class="bristol-btn" onclick="setBristol(5,this)"><div class="bristol-num">5</div><div class="bristol-icon">🫘</div><div class="bristol-desc">Pedaços macios</div></button>
+        <button class="bristol-btn" onclick="setBristol(6,this)"><div class="bristol-num">6</div><div class="bristol-icon">🥣</div><div class="bristol-desc">Pastoso</div></button>
+        <button class="bristol-btn" onclick="setBristol(7,this)"><div class="bristol-num">7</div><div class="bristol-icon">💧</div><div class="bristol-desc">Líquido</div></button>
+      </div>
+      <span class="form-label">Esforço?</span>
+      <div class="cg cg-3">
+        <button class="cb s-green" onclick="setC('esforco','nao','s-green',this)">😌 Nenhum</button>
+        <button class="cb" onclick="setC('esforco','pouco','s-yellow',this)">🟡 Um pouco</button>
+        <button class="cb" onclick="setC('esforco','muito','s-red',this)">🔴 Muito</button>
+      </div>
+      <span class="form-label">Gases / inchaço junto?</span>
+      <div class="cg cg-3">
+        <button class="cb s-green" onclick="setC('gases_int','nao','s-green',this)">Não</button>
+        <button class="cb" onclick="setC('gases_int','sim','s-orange',this)">Sim</button>
+        <button class="cb" onclick="setC('gases_int','muito','s-red',this)">Bastante</button>
+      </div>
+      <span class="form-label">Observação (opcional)</span>
+      <input class="form-input" id="int-obs" type="text" placeholder="Algo atípico pra anotar...">
+    </div>
+
+    <!-- BEXIGA -->
+    <div id="fields-bexiga" class="card card-pad" style="display:none">
+      <span class="form-label">Vezes ao banheiro — durante o dia</span>
+      <div class="cg cg-4">
+        <button class="cb" onclick="setC('bex_dia','1a4','s-green',this)">1–4×</button>
+        <button class="cb s-yellow" onclick="setC('bex_dia','5a7','s-yellow',this)">5–7×</button>
+        <button class="cb" onclick="setC('bex_dia','8a10','s-orange',this)">8–10×</button>
+        <button class="cb" onclick="setC('bex_dia','mais10','s-red',this)">10+×</button>
+      </div>
+      <span class="form-label">Vezes à noite (noctúria)</span>
+      <div class="cg cg-4">
+        <button class="cb s-green" onclick="setC('bex_noite','0','s-green',this)">0×</button>
+        <button class="cb" onclick="setC('bex_noite','1','s-yellow',this)">1×</button>
+        <button class="cb" onclick="setC('bex_noite','2','s-orange',this)">2×</button>
+        <button class="cb" onclick="setC('bex_noite','3mais','s-red',this)">3+×</button>
+      </div>
+      <span class="form-label">Urgência?</span>
+      <div class="cg cg-3">
+        <button class="cb s-green" onclick="setC('bex_urgencia','nao','s-green',this)">😌 Não</button>
+        <button class="cb" onclick="setC('bex_urgencia','pouca','s-yellow',this)">🟡 Pouca</button>
+        <button class="cb" onclick="setC('bex_urgencia','muita','s-red',this)">🔴 Muita</button>
+      </div>
+      <span class="form-label">Dor / desconforto?</span>
+      <div class="cg cg-3">
+        <button class="cb s-green" onclick="setC('bex_dor','nao','s-green',this)">Sem dor</button>
+        <button class="cb" onclick="setC('bex_dor','leve','s-yellow',this)">🟡 Leve</button>
+        <button class="cb" onclick="setC('bex_dor','forte','s-red',this)">🔴 Forte</button>
+      </div>
+      <span class="form-label">Observação (opcional)</span>
+      <input class="form-input" id="bex-obs" type="text" placeholder="Ex: ardência, cor diferente, vazamento...">
+    </div>
+
+        <!-- SONO -->
+    <div id="fields-sono" class="card card-pad" style="display:none">
+      <span class="form-label">Qualidade da noite</span>
+      <div class="cg cg-4">
+        <button class="cb s-green" onclick="setC('sleepq','boa','s-green',this)">😴<br>Boa</button>
+        <button class="cb" onclick="setC('sleepq','ok','s-yellow',this)">🙂<br>Ok</button>
+        <button class="cb" onclick="setC('sleepq','ruim','s-orange',this)">😕<br>Ruim</button>
+        <button class="cb" onclick="setC('sleepq','pessima','s-red',this)">😵<br>Péssima</button>
+      </div>
+      <span class="form-label">Horas dormidas</span>
+      <div class="cg cg-4">
+        <button class="cb" onclick="setC('horas','menos4','s-red',this)">‹4h</button>
+        <button class="cb" onclick="setC('horas','4a6','s-orange',this)">4–6h</button>
+        <button class="cb" onclick="setC('horas','6a8','s-yellow',this)">6–8h</button>
+        <button class="cb s-green" onclick="setC('horas','mais8','s-green',this)">8h+</button>
+      </div>
+      <span class="form-label">Acordou durante a noite?</span>
+      <div class="cg cg-4">
+        <button class="cb s-green" onclick="setC('wakeups','nao','s-green',this)">Não</button>
+        <button class="cb" onclick="setC('wakeups','1a2','s-yellow',this)">1–2×</button>
+        <button class="cb" onclick="setC('wakeups','3a5','s-orange',this)">3–5×</button>
+        <button class="cb" onclick="setC('wakeups','maisde5','s-red',this)">5+×</button>
+      </div>
+      <span class="form-label">Demorou pra dormir?</span>
+      <div class="cg cg-3">
+        <button class="cb s-green" onclick="setC('sleep_delay','nao','s-green',this)">Não, fácil</button>
+        <button class="cb" onclick="setC('sleep_delay','pouco','s-yellow',this)">Um pouco</button>
+        <button class="cb" onclick="setC('sleep_delay','muito','s-red',this)">Muito tempo</button>
+      </div>
+      <span class="form-label">Estresse do dia anterior</span>
+      <div class="cg cg-3">
+        <button class="cb s-green" onclick="setC('stress','baixo','s-green',this)">😌 Baixo</button>
+        <button class="cb" onclick="setC('stress','medio','s-yellow',this)">😐 Médio</button>
+        <button class="cb" onclick="setC('stress','alto','s-red',this)">😤 Alto</button>
+      </div>
+      <span class="form-label">O que atrapalhou? (opcional)</span>
+      <input class="form-input" id="sono-obs" type="text" placeholder="Ex: bexiga, ansiedade, pernas, barulho...">
+    </div>
+
+    <!-- EXERCÍCIO -->
+    <div id="fields-exercicio" class="card card-pad" style="display:none">
+      <span class="form-label">Tipo de atividade</span>
+      <div class="cg cg-3">
+        <button class="cb" onclick="toggleEx(this,'yoga')">🧘 Yoga</button>
+        <button class="cb" onclick="toggleEx(this,'meditação')">🪷 Meditação</button>
+        <button class="cb" onclick="toggleEx(this,'caminhada')">🚶 Caminhada</button>
+        <button class="cb" onclick="toggleEx(this,'corrida')">🏃 Corrida</button>
+        <button class="cb" onclick="toggleEx(this,'musculação')">🏋️ Musculação</button>
+        <button class="cb" onclick="toggleEx(this,'pilates')">🤸 Pilates</button>
+        <button class="cb" onclick="toggleEx(this,'natação')">🏊 Natação</button>
+        <button class="cb" onclick="toggleEx(this,'dança')">💃 Dança</button>
+        <button class="cb" onclick="toggleEx(this,'alongamento')">🙆 Alongamento</button>
+      </div>
+      <span class="form-label">Duração</span>
+      <div class="cg cg-4">
+        <button class="cb" onclick="setC('exdur','15min','s-teal',this)">15 min</button>
+        <button class="cb" onclick="setC('exdur','30min','s-teal',this)">30 min</button>
+        <button class="cb" onclick="setC('exdur','1h','s-teal',this)">1 hora</button>
+        <button class="cb" onclick="setC('exdur','mais1h','s-teal',this)">1h+</button>
+      </div>
+      <span class="form-label">Como se sentiu depois?</span>
+      <div class="cg cg-3">
+        <button class="cb s-green" onclick="setC('exfeel','bem','s-green',this)">😊 Bem</button>
+        <button class="cb" onclick="setC('exfeel','ok','s-yellow',this)">🙂 Ok</button>
+        <button class="cb" onclick="setC('exfeel','cansada','s-orange',this)">😮‍💨 Cansada</button>
+      </div>
+      <span class="form-label">Observação (opcional)</span>
+      <input class="form-input" id="ex-obs" type="text" placeholder="Ex: barriga mais calma depois, pernas pesadas...">
+    </div>
+
+    <!-- CICLO -->
+    <div id="fields-ciclo" class="card card-pad" style="display:none">
+      <span class="form-label">Fase</span>
+      <div class="cg cg-4">
+        <button class="cb s-pink" onclick="setC('cphase','menstruacao','s-pink',this)">🔴<br>Menst.</button>
+        <button class="cb" onclick="setC('cphase','pre','s-purple',this)">🌑<br>Pré-TPM</button>
+        <button class="cb" onclick="setC('cphase','ovulacao','s-yellow',this)">🌕<br>Ovulação</button>
+        <button class="cb" onclick="setC('cphase','outro','s-blue',this)">📍<br>Outro</button>
+      </div>
+      <span class="form-label">Fluxo</span>
+      <div class="cg cg-4">
+        <button class="cb s-green" onclick="setC('cflow','ausente','s-green',this)">— Ausente</button>
+        <button class="cb" onclick="setC('cflow','leve','s-yellow',this)">💧 Leve</button>
+        <button class="cb" onclick="setC('cflow','normal','s-orange',this)">💧💧 Normal</button>
+        <button class="cb" onclick="setC('cflow','intenso','s-red',this)">💧💧💧 Intenso</button>
+      </div>
+      <span class="form-label">Dor / cólica</span>
+      <div class="cg cg-3">
+        <button class="cb s-green" onclick="setC('cpain','sem','s-green',this)">😌 Sem dor</button>
+        <button class="cb" onclick="setC('cpain','leve','s-yellow',this)">🟡 Leve</button>
+        <button class="cb" onclick="setC('cpain','forte','s-red',this)">🔴 Forte</button>
+      </div>
+      <span class="form-label">Dor nas pernas</span>
+      <div class="cg cg-3">
+        <button class="cb s-green" onclick="setC('cpernas','sem','s-green',this)">😌 Sem</button>
+        <button class="cb" onclick="setC('cpernas','leve','s-yellow',this)">🟡 Leve</button>
+        <button class="cb" onclick="setC('cpernas','forte','s-red',this)">🔴 Forte</button>
+      </div>
+      <span class="form-label">Dor lombar</span>
+      <div class="cg cg-3">
+        <button class="cb s-green" onclick="setC('clombar','sem','s-green',this)">😌 Sem</button>
+        <button class="cb" onclick="setC('clombar','leve','s-yellow',this)">🟡 Leve</button>
+        <button class="cb" onclick="setC('clombar','forte','s-red',this)">🔴 Forte</button>
+      </div>
+      <span class="form-label">Dor de cabeça</span>
+      <div class="cg cg-3">
+        <button class="cb s-green" onclick="setC('ccabeca','sem','s-green',this)">😌 Sem</button>
+        <button class="cb" onclick="setC('ccabeca','leve','s-yellow',this)">🟡 Leve</button>
+        <button class="cb" onclick="setC('ccabeca','forte','s-red',this)">🔴 Forte</button>
+      </div>
+      <span class="form-label">Antiinflamatório (quantos?)</span>
+      <div class="cg cg-4">
+        <button class="cb s-green" onclick="setC('canti','0','s-green',this)">Não tomou</button>
+        <button class="cb" onclick="setC('canti','1','s-yellow',this)">1 comprimido</button>
+        <button class="cb" onclick="setC('canti','2','s-orange',this)">2 comprimidos</button>
+        <button class="cb" onclick="setC('canti','3','s-red',this)">3 comprimidos</button>
+      </div>
+      <span class="form-label">Cansaço</span>
+      <div class="cg cg-3">
+        <button class="cb s-green" onclick="setC('cfatigue','normal','s-green',this)">😊 Normal</button>
+        <button class="cb" onclick="setC('cfatigue','cansada','s-yellow',this)">😔 Cansada</button>
+        <button class="cb" onclick="setC('cfatigue','exausta','s-red',this)">😩 Exausta</button>
+      </div>
+      <span class="form-label">Candidíase?</span>
+      <div class="cg cg-3">
+        <button class="cb s-green" onclick="setC('ccandida','nao','s-green',this)">✅ Não</button>
+        <button class="cb" onclick="setC('ccandida','leve','s-yellow',this)">🟡 Leve</button>
+        <button class="cb" onclick="setC('ccandida','forte','s-red',this)">🔴 Forte</button>
+      </div>
+      <div id="candida-coceira-row" style="display:none">
+        <span class="form-label">Coceira?</span>
+        <div class="cg cg-3">
+          <button class="cb s-green" onclick="setC('ccoceira','pouca','s-green',this)">🙂 Pouca</button>
+          <button class="cb" onclick="setC('ccoceira','media','s-yellow',this)">😬 Média</button>
+          <button class="cb" onclick="setC('ccoceira','intensa','s-red',this)">😫 Intensa</button>
+        </div>
+      </div>
+      <span class="form-label">Herpes?</span>
+      <div class="cg cg-2">
+        <button class="cb s-green" onclick="setC('cherpes','nao','s-green',this)">✅ Não</button>
+        <button class="cb" onclick="setC('cherpes','sim','s-red',this)">⚠️ Sim</button>
+      </div>
+      <span class="form-label">Observação (opcional)</span>
+      <input class="form-input" id="ciclo-obs" type="text" placeholder="Ex: manchou roupa, intestino pior, dor diferente...">
+    </div>
+
+    <!-- MED/SUPL -->
+    <div id="fields-med" class="card card-pad" style="display:none">
+      <span class="form-label">O que tomou?</span>
+      <div class="cg cg-3">
+        <button class="cb" onclick="toggleMed(this,'Anticoncepcional')">💊 Anticoncepcional</button>
+        <button class="cb" onclick="toggleMed(this,'Lactase')">🥛 Lactase</button>
+        <button class="cb" onclick="toggleMed(this,'Tintura')">🌿 Tintura</button>
+        <button class="cb" onclick="toggleMed(this,'Óleo de alho')">🧄 Óleo de alho</button>
+        <button class="cb" onclick="toggleMed(this,'Óleo de orégano')">🌱 Óleo de orégano</button>
+      </div>
+      <span class="form-label">Outro (opcional)</span>
+      <input class="form-input" id="med-outro" type="text" placeholder="Ex: probiótico, ferro, vitamina D...">
+      <span class="form-label">Período</span>
+      <div class="cg cg-3">
+        <button class="cb s-blue" onclick="setC('med_periodo','hoje','s-blue',this)">📅 Hoje</button>
+        <button class="cb" onclick="setC('med_periodo','mes','s-purple',this)">🗓 Mês inteiro</button>
+        <button class="cb" onclick="setC('med_periodo','continuo','s-teal',this)">🔄 Uso contínuo</button>
+      </div>
+      <div id="med-mes-row" style="display:none">
+        <span class="form-label">Qual mês?</span>
+        <input class="form-input" id="med-mes" type="month">
+      </div>
+      <span class="form-label">Observação (opcional)</span>
+      <input class="form-input" id="med-obs" type="text" placeholder="Ex: esqueci de tomar, dose diferente...">
+    </div>
+
+    <!-- NOTA -->
+    <div id="fields-nota" class="card card-pad" style="display:none">
+      <span class="form-label">Anotação livre</span>
+      <textarea class="form-input" id="n-texto" placeholder="Ex: tomei probiótico, fase difícil, mudei dieta, consulta marcada..."></textarea>
+    </div>
+
+    <button class="btn-primary" onclick="saveEntry()">Salvar</button>
+  </div>
+</div>
+
+<!-- EXAMES -->
+<div class="section" id="sec-exames">
+  <div class="card card-pad" style="margin-top:8px">
+    <div style="font-size:15px;font-weight:700;margin-bottom:12px">🔬 Novo exame</div>
+    <span class="form-label">Nome do exame</span>
+    <input class="form-input" id="ex-nome" type="text" placeholder="Ex: Ferritina, B12, Teste SIBO, Hemograma...">
+    <span class="form-label">Data de realização</span>
+    <input class="form-input" id="ex-data-tab" type="date">
+    <span class="form-label">Resultado / valores</span>
+    <textarea class="form-input" id="ex-resultado" placeholder="Cole aqui os resultados relevantes..."></textarea>
+    <span class="form-label">Médico / laboratório</span>
+    <input class="form-input" id="ex-medico" type="text" placeholder="Dra. Fulana, Lab Fleury...">
+    <span class="form-label">Referência do arquivo (opcional)</span>
+    <input class="form-input" id="ex-arquivo" type="text" placeholder="Ex: Hemograma_jan2025.pdf, foto no álbum...">
+    <button class="btn-primary" onclick="saveExame()" style="margin-top:14px">Salvar exame</button>
+  </div>
+  <div class="card">
+    <div class="card-title">Exames registrados</div>
+    <div id="examesList"><div class="empty"><div class="empty-icon">🔬</div><div class="empty-text">Nenhum exame ainda.</div></div></div>
+  </div>
+</div>
+
+<!-- HISTÓRICO -->
+<div class="section" id="sec-historico">
+  <div class="filter-bar" style="margin-top:8px">
+    <button class="fp active" onclick="filterH('todos',this)">Todos</button>
+    <button class="fp" onclick="filterH('intestino',this)">Intestino</button>
+    <button class="fp" onclick="filterH('bexiga',this)">Bexiga</button>
+    <button class="fp" onclick="filterH('alimento',this)">Alimentos</button>
+    <button class="fp" onclick="filterH('sono',this)">Sono</button>
+    <button class="fp" onclick="filterH('exercicio',this)">Exercício</button>
+    <button class="fp" onclick="filterH('ciclo',this)">Ciclo</button>
+    <button class="fp" onclick="filterH('exame',this)">Exames</button>
+  </div>
+  <div class="card"><div id="historyList"></div></div>
+</div>
+
+<!-- ANÁLISE IA -->
+<div class="section" id="sec-analise">
+  <div class="card card-pad" style="margin-top:8px">
+    <div style="font-size:16px;font-weight:700;margin-bottom:6px">🤖 Análise dos registros</div>
+    <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px">Cruzo sintomas, intestino, alimentação, sono, exercício e ciclo pra identificar padrões e te ajudar a entender o que acontece com seu corpo.</div>
+    <button class="btn-primary blue" onclick="runAnalysis()">Analisar meu histórico</button>
+    <div class="ai-loading" id="aiLoading">⏳ Analisando...</div>
+    <div class="ai-response" id="aiResponse"></div>
+  </div>
+  <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:8px;line-height:1.5">⚕️ Apoio informativo — não substitui acompanhamento médico.</div>
+</div>
+
+</div><!-- end content -->
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAQxka0fFYKHkrttF4Hj8v2WMmNMQXiFqA",
+  authDomain: "wellness-e2a8a.firebaseapp.com",
+  projectId: "wellness-e2a8a",
+  storageBucket: "wellness-e2a8a.firebasestorage.app",
+  messagingSenderId: "526322741932",
+  appId: "1:526322741932:web:fdc612c70cf51fb6916509"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const COL = 'registros';
+
+let entries = [];
+let currentType = 'inchaco';
+let choices = {};
+let selectedEx = new Set();
+let selectedMed = new Set();
+let selectedIncSint = new Set();
+let bristolVal = null;
+let currentFilter = 'todos';
+
+function resetChoices() {
+  choices = { sleepq:'boa', horas:'mais8', wakeups:'nao', sleep_delay:'nao', stress:'baixo', foi:'sim', esforco:'nao', gases_int:'nao', exdur:'30min', exfeel:'bem', cphase:'menstruacao', cflow:'ausente', cpain:'sem', clombar:'sem', ccabeca:'sem', cpernas:'sem', canti:'0', cfatigue:'normal', ccandida:'nao', ccoceira:'pouca', cherpes:'nao', inc_quando:'logo', inc_int:'medio', inchacou:true, inc_lactose:'nao', inc_lactase:'sim', med_periodo:'hoje', bex_dia:'1a4', bex_noite:'0', bex_urgencia:'nao', bex_dor:'nao' };
+  selectedEx = new Set();
+  selectedMed = new Set();
+  selectedIncSint = new Set();
+  bristolVal = null;
+}
+resetChoices();
+
+function setTodayDate() {
+  const el = document.getElementById("entry-date");
+  if(el) el.value = new Date().toISOString().split("T")[0];
+}
+setTodayDate();
+
+document.getElementById('currentDate').textContent = new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});
+
+// ── Firebase load/save ──────────────────────────────
+async function loadFromFirebase() {
+  showToast('Carregando...');
+  try {
+    const q = query(collection(db, COL), orderBy('date', 'desc'));
+    const snap = await getDocs(q);
+    entries = snap.docs.map(d => ({ ...d.data(), _fbid: d.id }));
+    updateSummary();
+    showToast('');
+  } catch(err) {
+    console.error(err);
+    showToast('Erro ao carregar dados 😕');
+  }
+}
+
+async function saveToFirebase(e) {
+  try {
+    const ref = await addDoc(collection(db, COL), e);
+    e._fbid = ref.id;
+    entries.unshift(e);
+    updateSummary();
+    showToast('Salvo! ✅');
+  } catch(err) {
+    console.error(err);
+    showToast('Erro ao salvar 😕');
+  }
+}
+
+async function deleteEntry(id) {
+  const entry = entries.find(e => e.id === id);
+  if(!entry) return;
+  try {
+    await deleteDoc(doc(db, COL, entry._fbid));
+    entries = entries.filter(e => e.id !== id);
+    updateSummary();
+    renderHistory();
+    showToast('Removido');
+  } catch(err) {
+    showToast('Erro ao remover 😕');
+  }
+}
+
+// ── UI ──────────────────────────────────────────────
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('sec-'+tab).classList.add('active');
+  if(tab==='resumo') updateSummary();
+  if(tab==='historico') renderHistory();
+  if(tab==='exames') renderExames();
+}
+window.switchTab = switchTab;
+
+function setType(type, btn) {
+  currentType = type;
+  document.querySelectorAll('#typeCtrl .seg-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  ['inchaco','intestino','bexiga','sono','exercicio','ciclo','nota','med'].forEach(t=>{
+    const el = document.getElementById('fields-'+t); if(!el) return;
+    el.style.display = t===type?'block':'none';
+  });
+}
+window.setType = setType;
+
+function setC(key, val, colorClass, btn) {
+  choices[key] = val;
+  const row = btn.parentElement;
+  row.querySelectorAll('.cb').forEach(b=>{ b.className='cb'; });
+  btn.classList.add(colorClass);
+  if(key==='ccandida') document.getElementById('candida-coceira-row').style.display = val==='nao'?'none':'block';
+  if(key==='inc_lactose') document.getElementById('inc-lactase-row').style.display = val==='sim'?'block':'none';
+  if(key==='med_periodo') document.getElementById('med-mes-row').style.display = val==='mes'?'block':'none';
+}
+window.setC = setC;
+
+function setInchacou(val, btn) {
+  choices.inchacou = val;
+  document.getElementById('inchaco-sim-btn').className = 'cb' + (val ? ' s-orange' : '');
+  document.getElementById('inchaco-nao-btn').className = 'cb' + (!val ? ' s-green' : '');
+  document.getElementById('inchaco-detalhes').style.display = val ? 'block' : 'none';
+}
+window.setInchacou = setInchacou;
+
+function toggleIncSint(btn, val) {
+  if(selectedIncSint.has(val)) { selectedIncSint.delete(val); btn.className='cb'; }
+  else { selectedIncSint.add(val); btn.classList.add('s-orange'); }
+}
+window.toggleIncSint = toggleIncSint;
+
+function toggleEx(btn, val) {
+  if(selectedEx.has(val)) { selectedEx.delete(val); btn.className='cb'; }
+  else { selectedEx.add(val); btn.classList.add('s-teal'); }
+}
+window.toggleEx = toggleEx;
+
+function toggleMed(btn, val) {
+  if(selectedMed.has(val)) { selectedMed.delete(val); btn.className='cb'; }
+  else { selectedMed.add(val); btn.classList.add('s-purple'); }
+}
+window.toggleMed = toggleMed;
+
+function setBristol(num, btn) {
+  bristolVal = num;
+  document.querySelectorAll('.bristol-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+}
+window.setBristol = setBristol;
+
+function filterH(f,btn) {
+  currentFilter=f;
+  document.querySelectorAll('.fp').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderHistory();
+}
+window.filterH = filterH;
+
+async function saveEntry() {
+  const dateInput = document.getElementById('entry-date').value;
+  const entryDate = dateInput ? new Date(dateInput + 'T12:00:00').toISOString() : new Date().toISOString();
+  let e = { id: Date.now(), type: currentType, date: entryDate };
+
+  if(currentType==='inchaco') {
+    const comeu=document.getElementById('inc-comeu').value.trim();
+    if(!comeu){showToast('O que você comeu? 😊');return;}
+    e.comeu=comeu; e.inchacou=choices.inchacou;
+    if(choices.inchacou){ e.quando=choices.inc_quando; e.intensidade=choices.inc_int; e.sintomas=[...selectedIncSint]; }
+    e.lactose=choices.inc_lactose; e.lactase=choices.inc_lactase;
+    e.obs=document.getElementById('inc-obs').value.trim();
+  } else if(currentType==='intestino') {
+    e.foi=choices.foi; e.bristol=bristolVal; e.esforco=choices.esforco; e.gases=choices.gases_int;
+    e.obs=document.getElementById('int-obs').value.trim();
+  } else if(currentType==='bexiga') {
+    e.dia=choices.bex_dia; e.noite=choices.bex_noite; e.urgencia=choices.bex_urgencia; e.dor=choices.bex_dor;
+    e.obs=document.getElementById('bex-obs').value.trim();
+  } else if(currentType==='sono') {
+    e.quality=choices.sleepq; e.horas=choices.horas; e.wakeups=choices.wakeups;
+    e.delay=choices.sleep_delay; e.stress=choices.stress;
+    e.obs=document.getElementById('sono-obs').value.trim();
+  } else if(currentType==='exercicio') {
+    if(selectedEx.size===0){showToast('Marca a atividade 😊');return;}
+    e.atividades=[...selectedEx]; e.duracao=choices.exdur; e.feel=choices.exfeel;
+    e.obs=document.getElementById('ex-obs').value.trim();
+  } else if(currentType==='ciclo') {
+    e.phase=choices.cphase; e.flow=choices.cflow; e.pain=choices.cpain;
+    e.pernas=choices.cpernas; e.lombar=choices.clombar; e.cabeca=choices.ccabeca;
+    e.anti=choices.canti; e.fatigue=choices.cfatigue;
+    e.candida=choices.ccandida; e.coceira=choices.ccoceira; e.herpes=choices.cherpes;
+    e.obs=document.getElementById('ciclo-obs').value.trim();
+  } else if(currentType==='med') {
+    const outro=document.getElementById('med-outro').value.trim();
+    const meds=[...selectedMed]; if(outro) meds.push(outro);
+    if(!meds.length){showToast('Marca o que tomou 😊');return;}
+    e.meds=meds; e.periodo=choices.med_periodo;
+    if(choices.med_periodo==='mes') e.mes=document.getElementById('med-mes').value;
+    e.obs=document.getElementById('med-obs').value.trim();
+  } else {
+    const texto=document.getElementById('n-texto').value.trim();
+    if(!texto){showToast('Escreve algo 😊');return;}
+    e.texto=texto;
+  }
+
+  await saveToFirebase(e);
+  clearForm();
+}
+window.saveEntry = saveEntry;
+
+function clearForm() {
+  resetChoices();
+  setTodayDate();
+  document.querySelectorAll('.cb').forEach(b=>b.className='cb');
+  document.querySelectorAll('.bristol-btn').forEach(b=>b.classList.remove('sel'));
+  ['inc-comeu','inc-obs','int-obs','bex-obs','med-outro','med-obs','sono-obs','ex-obs','ciclo-obs','n-texto'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+}
+
+const typeIcons={inchaco:'🌀',intestino:'🚽',bexiga:'💧',sono:'🌙',exercicio:'🏃',ciclo:'🌸',exame:'🔬',nota:'📝',med:'💊'};
+const typeLabels={inchaco:'Inchaço',intestino:'Intestino',bexiga:'Bexiga',sono:'Sono',exercicio:'Exercício',ciclo:'Ciclo',exame:'Exame',nota:'Nota',med:'Med/Supl'};
+const bristolDesc={1:'bolinhas duras',2:'grumos duros',3:'com rachaduras',4:'liso normal',5:'pedaços macios',6:'pastoso',7:'líquido'};
+const sleepLabels={boa:'😴 Boa',ok:'🙂 Ok',ruim:'😕 Ruim',pessima:'😵 Péssima'};
+const horasLabels={menos4:'menos de 4h','4a6':'4–6h','6a8':'6–8h',mais8:'8h+'};
+const wakeLabels={nao:'sem acordar','1a2':'acordou 1–2×','3a5':'acordou 3–5×',maisde5:'acordou 5+×'};
+const phaseLabels={menstruacao:'🔴 Menstruação',pre:'🌑 Pré-TPM',ovulacao:'🌕 Ovulação',outro:'📍 Outro'};
+
+function entryCard(e, withDel=true) {
+  const d=new Date(e.date);
+  const ds=d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})+' · '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  let title='', sub='';
+  if(e.type==='bexiga'){
+    title='💧 Bexiga';
+    const diaMap={'1a4':'1–4× dia','5a7':'5–7× dia','8a10':'8–10× dia','mais10':'10+× dia'};
+    const noiteMap={'0':'sem noctúria','1':'1× noite','2':'2× noite','3mais':'3+× noite'};
+    sub=(diaMap[e.dia]||e.dia)+' · '+(noiteMap[e.noite]||e.noite);
+    if(e.urgencia&&e.urgencia!=='nao') sub+=' · urgência '+e.urgencia;
+    if(e.dor&&e.dor!=='nao') sub+=' · dor '+e.dor;
+    if(e.obs) sub+=' · '+e.obs;
+  } else if(e.type==='med'){
+    title=(e.meds||[]).join(' · ');
+    const periodoMap={hoje:'hoje',mes:'mês inteiro',continuo:'uso contínuo'};
+    sub=periodoMap[e.periodo]||e.periodo;
+    if(e.mes) sub+=' — '+e.mes;
+    if(e.obs) sub+=' · '+e.obs;
+  } else if(e.type==='inchaco'){
+    title = e.inchacou ? '🌀 Inchou após: '+e.comeu : '✅ Sem inchaço: '+e.comeu;
+    const whenMap={logo:'logo após','1h':'~1h depois','2h':'~2h depois',horas:'horas depois'};
+    if(e.inchacou) sub=(whenMap[e.quando]||e.quando)+' · '+(e.intensidade||'');
+    if(e.sintomas&&e.sintomas.length) sub+=(sub?' · ':'')+e.sintomas.join(', ');
+    if(e.lactose==='sim') sub+=(sub?' · ':'')+'🥛 c/ lactose'+(e.lactase==='nao'?' sem lactase':'');
+    if(e.obs) sub+=(sub?' · ':'')+e.obs;
+  } else if(e.type==='intestino'){
+    title = e.foi==='nao' ? '❌ Não foi' : e.foi==='varias' ? '🔄 Várias vezes' : '✅ Foi ao banheiro';
+    if(e.bristol) sub='Bristol '+e.bristol+' — '+(bristolDesc[e.bristol]||'');
+    if(e.obs) sub+=(sub?' · ':'')+e.obs;
+  } else if(e.type==='sono'){
+    title=sleepLabels[e.quality]||e.quality;
+    const parts=[];
+    if(e.horas) parts.push(horasLabels[e.horas]||e.horas);
+    if(e.wakeups) parts.push(wakeLabels[e.wakeups]||e.wakeups);
+    if(e.stress) parts.push('estresse '+e.stress);
+    sub=parts.join(' · ');
+    if(e.obs) sub+=(sub?'<br>':'')+e.obs;
+  } else if(e.type==='exercicio'){
+    title=(e.atividades||[]).join(' + ');
+    sub=(e.duracao||'')+(e.feel?' · '+e.feel:'');
+    if(e.obs) sub+=(sub?' · ':'')+e.obs;
+  } else if(e.type==='ciclo'){
+    title=phaseLabels[e.phase]||e.phase;
+    const parts=[];
+    if(e.flow&&e.flow!=='ausente') parts.push(e.flow);
+    if(e.pain&&e.pain!=='sem') parts.push('dor '+e.pain);
+    if(e.fatigue&&e.fatigue!=='normal') parts.push(e.fatigue);
+    if(e.anti&&e.anti!=='0') parts.push(e.anti+'× antiinfl.');
+    sub=parts.join(' · ');
+    if(e.obs) sub+=(sub?'<br>':'')+e.obs;
+  } else if(e.type==='exame'){
+    title=e.nome;
+    if(e.resultado) sub=e.resultado.substring(0,70)+(e.resultado.length>70?'…':'');
+    if(e.medico) sub+=(sub?'<br>':'')+e.medico;
+  } else { title=e.texto||''; }
+  const _icon = typeIcons[e.type]||'📌';
+  return '<div class="list-item">' +
+    '<div class="item-icon icon-'+e.type+'">'+_icon+'</div>' +
+    '<div class="item-body">' +
+      '<div class="item-title">'+title+'</div>' +
+      (sub?'<div class="item-sub">'+sub+'</div>':'') +
+      '<div class="item-date">'+ds+'</div>' +
+    '</div>' +
+    (withDel?'<button class="btn-del" onclick="deleteEntry('+e.id+')">×</button>':'')+
+  '</div>';
+}
+window.deleteEntry = deleteEntry;
+
+function updateSummary() {
+  document.getElementById('s-total').textContent=entries.length;
+  document.getElementById('s-sint').textContent=entries.filter(e=>e.type==='inchaco').length;
+  document.getElementById('s-sono').textContent=entries.filter(e=>e.type==='sono').length;
+  if(entries.length>0){
+    const last=entries[0]; const d=new Date(last.date);
+    document.getElementById('s-last').textContent=d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
+    document.getElementById('s-lasttype').textContent=typeLabels[last.type]||last.type;
+  }
+  const rl=document.getElementById('recentList');
+  if(!entries.length){rl.innerHTML='<div class="empty"><div class="empty-icon">🌿</div><div class="empty-text">Nenhum registro ainda.<br>Toca em "+ Registrar" pra começar.</div></div>';return;}
+  rl.innerHTML=entries.slice(0,5).map(e=>entryCard(e,false)).join('');
+}
+
+function renderHistory(){
+  const list=document.getElementById('historyList');
+  const filtered=currentFilter==='todos'?entries:entries.filter(e=>e.type===currentFilter);
+  if(!filtered.length){list.innerHTML='<div class="empty"><div class="empty-icon">📂</div><div class="empty-text">Nenhum registro aqui ainda.</div></div>';return;}
+  list.innerHTML=filtered.map(e=>entryCard(e)).join('');
+}
+
+async function saveExame() {
+  const nome=document.getElementById('ex-nome').value.trim();
+  if(!nome){showToast('Coloca o nome do exame 😊');return;}
+  const e={
+    id:Date.now(), type:'exame',
+    date:(document.getElementById('ex-data-tab').value?new Date(document.getElementById('ex-data-tab').value+'T12:00:00').toISOString():new Date().toISOString()),
+    nome, resultado:document.getElementById('ex-resultado').value.trim(),
+    exameData:document.getElementById('ex-data-tab').value,
+    medico:document.getElementById('ex-medico').value.trim(),
+    arquivo:document.getElementById('ex-arquivo').value.trim()
+  };
+  await saveToFirebase(e);
+  ['ex-nome','ex-data-tab','ex-resultado','ex-medico','ex-arquivo'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  renderExames();
+}
+window.saveExame = saveExame;
+
+function renderExames() {
+  const list=document.getElementById('examesList');
+  const exames=entries.filter(e=>e.type==='exame');
+  if(!exames.length){list.innerHTML='<div class="empty"><div class="empty-icon">🔬</div><div class="empty-text">Nenhum exame ainda.</div></div>';return;}
+  list.innerHTML=exames.map(e=>{
+    const d=new Date(e.date);
+    const ds=d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});
+    return '<div class="list-item">' +
+      '<div class="item-icon icon-exame">🔬</div>' +
+      '<div class="item-body">' +
+        '<div class="item-title">'+e.nome+'</div>' +
+        (e.resultado?'<div class="item-sub">'+e.resultado.substring(0,80)+(e.resultado.length>80?'…':'')+'</div>':'') +
+        (e.medico?'<div class="item-sub">'+e.medico+'</div>':'') +
+        (e.arquivo?'<div class="item-sub">📎 '+e.arquivo+'</div>':'') +
+        '<div class="item-date">'+(e.exameData||ds)+'</div>' +
+      '</div>' +
+      '<button class="btn-del" onclick="deleteEntry('+e.id+')">×</button>' +
+    '</div>';
+  }).join('');
+}
+
+async function runAnalysis(){
+  if(!entries.length){showToast('Adiciona alguns registros primeiro 😊');return;}
+  document.getElementById('aiLoading').style.display='block';
+  document.getElementById('aiResponse').style.display='none';
+  document.querySelector('.btn-primary.blue').disabled=true;
+  const ds=entries.map(e=>{
+    const d=new Date(e.date).toLocaleDateString('pt-BR');
+    if(e.type==='inchaco') return '['+d+'] INCHAÇO: comeu='+e.comeu+', inchou='+(e.inchacou?'sim':'nao')+(e.inchacou?', quando='+e.quando+', intensidade='+e.intensidade:'')+(e.obs?' obs:'+e.obs:'');
+    if(e.type==='intestino') return '['+d+'] INTESTINO: foi='+e.foi+', bristol='+(e.bristol||'?')+', esforco='+e.esforco+(e.obs?' obs:'+e.obs:'');
+    if(e.type==='bexiga') return '['+d+'] BEXIGA: dia='+e.dia+', noite='+e.noite+', urgencia='+e.urgencia+(e.obs?' obs:'+e.obs:'');
+    if(e.type==='sono') return '['+d+'] SONO: qualidade='+e.quality+', horas='+e.horas+', acordou='+e.wakeups+', estresse='+e.stress+(e.obs?' obs:'+e.obs:'');
+    if(e.type==='exercicio') return '['+d+'] EXERCÍCIO: '+(e.atividades||[]).join('+')+' '+e.duracao+(e.obs?' obs:'+e.obs:'');
+    if(e.type==='ciclo') return '['+d+'] CICLO: fase='+e.phase+', fluxo='+e.flow+', dor='+e.pain+', cansaço='+e.fatigue+', anti='+e.anti+(e.candida&&e.candida!=='nao'?', candida='+e.candida:'')+(e.obs?' obs:'+e.obs:'');
+    if(e.type==='med') return '['+d+'] MED: '+(e.meds||[]).join('+')+' periodo='+e.periodo+(e.obs?' obs:'+e.obs:'');
+    if(e.type==='exame') return '['+(e.exameData||d)+'] EXAME: '+e.nome+(e.resultado?' - '+e.resultado:'');
+    return '['+d+'] NOTA: '+(e.texto||'');
+  }).join('\n');
+  try {
+    const res=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        model:"claude-sonnet-4-6",max_tokens:1000,
+        system:"Você é assistente de saúde empática especializada no histórico da Mari.\nContexto clínico: SIBO-IMO (rifaximina+neomicina piorou, parou tudo); Endometriose+Adenomiose (anticoncepcional 3ª-4ª cartela, melhorando); Intolerância à lactose (usa lactase); Candidíase recorrente; Pernas inquietas em remissão (ferro IV + remédio dor — refazer ferritina!); B12 baixa (suplementada); Ansiedade encerrada; Insônia variável; gatilho inicial: pico de estresse há ~2 anos.\nFoco principal: reduzir inchaço e inflamação intestinal crônica.\nAo analisar: cruze intestino + inchaço + ciclo + exercício + sono + estresse. Endometriose piora SIBO via inflamação. Exercício melhora trânsito. Identifique padrões, gatilhos, alimentos seguros.\nLinguagem: calorosa, direta, português brasileiro casual. Finalize lembrando que é apoio informativo.",
+        messages:[{role:"user",content:"Registros:\n\n"+ds+"\n\nAnálise completa com foco no inchaço e intestino."}]
+      })
+    });
+    const data=await res.json();
+    const txt=(data.content||[]).filter(c=>c.type==="text").map(c=>c.text).join('')||'Não consegui analisar. Tente novamente.';
+    document.getElementById('aiResponse').textContent=txt;
+    document.getElementById('aiResponse').style.display='block';
+  } catch(err){
+    document.getElementById('aiResponse').textContent='Erro ao conectar. Tente novamente.';
+    document.getElementById('aiResponse').style.display='block';
+  }
+  document.getElementById('aiLoading').style.display='none';
+  document.querySelector('.btn-primary.blue').disabled=false;
+}
+window.runAnalysis = runAnalysis;
+
+function exportData(){
+  if(!entries.length){showToast('Nenhum dado pra exportar 😊');return;}
+  const clean=entries.map(e=>{const c={...e};delete c._fbid;return c;});
+  const blob=new Blob([JSON.stringify({version:'firebase',exportedAt:new Date().toISOString(),entries:clean},null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download='saude_mari_'+new Date().toLocaleDateString('pt-BR').replace(/\//g,'-')+'.json';
+  a.click(); URL.revokeObjectURL(url);
+  showToast('Backup exportado! ✅');
+}
+window.exportData = exportData;
+
+function importData(event){
+  const file=event.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=async function(ev){
+    try {
+      const parsed=JSON.parse(ev.target.result);
+      const imported=parsed.entries||parsed;
+      if(!Array.isArray(imported)) throw new Error();
+      showToast('Importando '+imported.length+' registros...');
+      for(const e of imported){
+        const c={...e}; delete c._fbid;
+        await addDoc(collection(db, COL), c);
+      }
+      await loadFromFirebase();
+      showToast(imported.length+' registros importados! ✅');
+    } catch(err){ showToast('Arquivo inválido 😕'); }
+    event.target.value='';
+  };
+  reader.readAsText(file);
+}
+window.importData = importData;
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  if(!msg){t.classList.remove('show');return;}
+  t.textContent=msg; t.classList.add('show');
+  if(msg!=='Carregando...') setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+// Init
+loadFromFirebase();
+</script>
+</body>
+</html>
