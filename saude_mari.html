@@ -569,7 +569,7 @@ textarea.form-input { resize: vertical; min-height: 70px; line-height: 1.5; }
 <div class="section" id="sec-analise">
   <div class="card card-pad" style="margin-top:8px">
     <div style="font-size:16px;font-weight:700;margin-bottom:6px">🤖 Análise dos registros</div>
-    <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px">Cruzo sintomas, intestino, alimentação, sono, exercício e ciclo pra identificar padrões e te ajudar a entender o que acontece com seu corpo.</div>
+    <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px">Monta um resumo dos seus registros e abre o Claude pra análise — funciona em qualquer dispositivo.</div>
     <button class="btn-primary blue" onclick="runAnalysis()">Analisar meu histórico</button>
     <div class="ai-loading" id="aiLoading">⏳ Analisando...</div>
     <div class="ai-response" id="aiResponse"></div>
@@ -607,7 +607,7 @@ let bristolVal = null;
 let currentFilter = 'todos';
 
 function resetChoices() {
-  choices = { inc_periodo:'', sleepq:'boa', horas:'mais8', wakeups:'nao', sleep_delay:'nao', stress:'baixo', foi:'sim', esforco:'nao', gases_int:'nao', exdur:'30min', exfeel:'bem', cphase:'menstruacao', cflow:'ausente', cpain:'sem', clombar:'sem', ccabeca:'sem', cpernas:'sem', canti:'0', cfatigue:'normal', ccandida:'nao', ccoceira:'pouca', cherpes:'nao', inc_quando:'logo', inc_int:'medio', inchacou:true, inc_lactose:'nao', inc_lactase:'sim',  inc_periodo:'', med_periodo:'hoje', bex_dia:'1a4', bex_noite:'0', bex_urgencia:'nao', bex_dor:'nao' };
+  choices = { inc_periodo:'', sleepq:'boa', horas:'mais8', wakeups:'nao', sleep_delay:'nao', stress:'baixo', foi:'sim', esforco:'nao', gases_int:'nao', exdur:'30min', exfeel:'bem', cphase:'menstruacao', cflow:'ausente', cpain:'sem', clombar:'sem', ccabeca:'sem', cpernas:'sem', canti:'0', cfatigue:'normal', ccandida:'nao', ccoceira:'pouca', cherpes:'nao', inc_quando:'logo', inc_int:'medio', inchacou:true, inc_lactose:'nao', inc_lactase:'sim', med_periodo:'hoje', bex_dia:'1a4', bex_noite:'0', bex_urgencia:'nao', bex_dor:'nao' };
   selectedEx = new Set();
   selectedMed = new Set();
   selectedIncSint = new Set();
@@ -675,7 +675,6 @@ function switchTab(tab, btn) {
   if(tab==='historico') renderHistory();
   if(tab==='exames') renderExames();
 }
-window.switchTab = switchTab;
 
 function setType(type, btn) {
   currentType = type;
@@ -686,7 +685,6 @@ function setType(type, btn) {
     el.style.display = t===type?'block':'none';
   });
 }
-window.setType = setType;
 
 function setC(key, val, colorClass, btn) {
   choices[key] = val;
@@ -697,7 +695,6 @@ function setC(key, val, colorClass, btn) {
   if(key==='inc_lactose') document.getElementById('inc-lactase-row').style.display = val==='sim'?'block':'none';
   if(key==='med_periodo') document.getElementById('med-mes-row').style.display = val==='mes'?'block':'none';
 }
-window.setC = setC;
 
 function setInchacou(val, btn) {
   choices.inchacou = val;
@@ -705,32 +702,27 @@ function setInchacou(val, btn) {
   document.getElementById('inchaco-nao-btn').className = 'cb' + (!val ? ' s-green' : '');
   document.getElementById('inchaco-detalhes').style.display = val ? 'block' : 'none';
 }
-window.setInchacou = setInchacou;
 
 function toggleIncSint(btn, val) {
   if(selectedIncSint.has(val)) { selectedIncSint.delete(val); btn.className='cb'; }
   else { selectedIncSint.add(val); btn.classList.add('s-orange'); }
 }
-window.toggleIncSint = toggleIncSint;
 
 function toggleEx(btn, val) {
   if(selectedEx.has(val)) { selectedEx.delete(val); btn.className='cb'; }
   else { selectedEx.add(val); btn.classList.add('s-teal'); }
 }
-window.toggleEx = toggleEx;
 
 function toggleMed(btn, val) {
   if(selectedMed.has(val)) { selectedMed.delete(val); btn.className='cb'; }
   else { selectedMed.add(val); btn.classList.add('s-purple'); }
 }
-window.toggleMed = toggleMed;
 
 function setBristol(num, btn) {
   bristolVal = num;
   document.querySelectorAll('.bristol-btn').forEach(b=>b.classList.remove('sel'));
   btn.classList.add('sel');
 }
-window.setBristol = setBristol;
 
 function filterH(f,btn) {
   currentFilter=f;
@@ -738,7 +730,6 @@ function filterH(f,btn) {
   btn.classList.add('active');
   renderHistory();
 }
-window.filterH = filterH;
 
 async function saveEntry() {
   const dateInput = document.getElementById('entry-date').value;
@@ -788,7 +779,6 @@ async function saveEntry() {
   await saveToFirebase(e);
   clearForm();
 }
-window.saveEntry = saveEntry;
 
 function clearForm() {
   resetChoices();
@@ -876,7 +866,6 @@ function entryCard(e, withDel=true) {
     (withDel?'<button class="btn-del" onclick="deleteEntry('+e.id+')">×</button>':'')+
   '</div>';
 }
-window.deleteEntry = deleteEntry;
 
 function updateSummary() {
   document.getElementById('s-total').textContent=entries.length;
@@ -914,7 +903,6 @@ async function saveExame() {
   ['ex-nome','ex-data-tab','ex-resultado','ex-medico','ex-arquivo'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   renderExames();
 }
-window.saveExame = saveExame;
 
 function renderExames() {
   const list=document.getElementById('examesList');
@@ -937,14 +925,11 @@ function renderExames() {
   }).join('');
 }
 
-async function runAnalysis(){
+function runAnalysis(){
   if(!entries.length){showToast('Adiciona alguns registros primeiro 😊');return;}
-  document.getElementById('aiLoading').style.display='block';
-  document.getElementById('aiResponse').style.display='none';
-  document.querySelector('.btn-primary.blue').disabled=true;
   const ds=entries.map(e=>{
     const d=new Date(e.date).toLocaleDateString('pt-BR');
-    if(e.type==='inchaco') return '['+d+'] INCHAÇO: comeu='+e.comeu+', inchou='+(e.inchacou?'sim':'nao')+(e.inchacou?', quando='+e.quando+', intensidade='+e.intensidade:'')+(e.obs?' obs:'+e.obs:'');
+    if(e.type==='inchaco') return '['+d+'] INCHAÇO: comeu='+e.comeu+', inchou='+(e.inchacou?'sim':'nao')+(e.inchacou?', quando='+e.quando+', intensidade='+e.intensidade:'')+(e.periodo_refeicao?' periodo='+e.periodo_refeicao:'')+(e.obs?' obs:'+e.obs:'');
     if(e.type==='intestino') return '['+d+'] INTESTINO: foi='+e.foi+', bristol='+(e.bristol||'?')+', esforco='+e.esforco+(e.obs?' obs:'+e.obs:'');
     if(e.type==='bexiga') return '['+d+'] BEXIGA: dia='+e.dia+', noite='+e.noite+', urgencia='+e.urgencia+(e.obs?' obs:'+e.obs:'');
     if(e.type==='sono') return '['+d+'] SONO: qualidade='+e.quality+', horas='+e.horas+', acordou='+e.wakeups+', estresse='+e.stress+(e.obs?' obs:'+e.obs:'');
@@ -954,27 +939,12 @@ async function runAnalysis(){
     if(e.type==='exame') return '['+(e.exameData||d)+'] EXAME: '+e.nome+(e.resultado?' - '+e.resultado:'');
     return '['+d+'] NOTA: '+(e.texto||'');
   }).join('\n');
-  try {
-    const res=await fetch("https://api.anthropic.com/v1/messages",{
-      method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        model:"claude-sonnet-4-6",max_tokens:1000,
-        system:"Você é assistente de saúde empática especializada no histórico da Mari.\nContexto clínico: SIBO-IMO (rifaximina+neomicina piorou, parou tudo); Endometriose+Adenomiose (anticoncepcional 3ª-4ª cartela, melhorando); Intolerância à lactose (usa lactase); Candidíase recorrente; Pernas inquietas em remissão (ferro IV + remédio dor — refazer ferritina!); B12 baixa (suplementada); Ansiedade encerrada; Insônia variável; gatilho inicial: pico de estresse há ~2 anos.\nFoco principal: reduzir inchaço e inflamação intestinal crônica.\nAo analisar: cruze intestino + inchaço + ciclo + exercício + sono + estresse. Endometriose piora SIBO via inflamação. Exercício melhora trânsito. Identifique padrões, gatilhos, alimentos seguros.\nLinguagem: calorosa, direta, português brasileiro casual. Finalize lembrando que é apoio informativo.",
-        messages:[{role:"user",content:"Registros:\n\n"+ds+"\n\nAnálise completa com foco no inchaço e intestino."}]
-      })
-    });
-    const data=await res.json();
-    const txt=(data.content||[]).filter(c=>c.type==="text").map(c=>c.text).join('')||'Não consegui analisar. Tente novamente.';
-    document.getElementById('aiResponse').textContent=txt;
-    document.getElementById('aiResponse').style.display='block';
-  } catch(err){
-    document.getElementById('aiResponse').textContent='Erro ao conectar. Tente novamente.';
-    document.getElementById('aiResponse').style.display='block';
-  }
-  document.getElementById('aiLoading').style.display='none';
-  document.querySelector('.btn-primary.blue').disabled=false;
+
+  const prompt = `Oi Claude! Sou a Mari. Aqui estão meus registros de saúde para análise:\n\nContexto: tenho SIBO-IMO, endometriose, adenomiose, intolerância à lactose, candidíase recorrente, pernas inquietas em remissão (preciso refazer ferritina), B12 foi baixa. Estou no anticoncepcional há ~4 cartelas. Foco principal: entender e reduzir meu inchaço intestinal crônico.\n\nRegistros:\n${ds}\n\nPor favor faça uma análise completa cruzando inchaço, intestino, ciclo, sono e exercício. Identifique padrões e gatilhos.`;
+
+  const url = 'https://claude.ai/new?q=' + encodeURIComponent(prompt);
+  window.open(url, '_blank');
 }
-window.runAnalysis = runAnalysis;
 
 function exportData(){
   if(!entries.length){showToast('Nenhum dado pra exportar 😊');return;}
@@ -986,7 +956,6 @@ function exportData(){
   a.click(); URL.revokeObjectURL(url);
   showToast('Backup exportado! ✅');
 }
-window.exportData = exportData;
 
 function importData(event){
   const file=event.target.files[0]; if(!file) return;
@@ -1008,7 +977,6 @@ function importData(event){
   };
   reader.readAsText(file);
 }
-window.importData = importData;
 
 function showToast(msg){
   const t=document.getElementById('toast');
